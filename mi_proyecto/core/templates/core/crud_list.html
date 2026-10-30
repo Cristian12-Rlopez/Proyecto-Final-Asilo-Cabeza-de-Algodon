@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+{% block titulo %}{{ pagina.titulo }}{% endblock %}
+{% block contenido %}
+<div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">{{ pagina.titulo }}</h2>
+        {% if pagina.descripcion %}<p class="text-sm text-gray-500 mt-1">{{ pagina.descripcion }}</p>{% endif %}
+    </div>
+    <div class="flex flex-wrap gap-2">
+        {% for texto, url in enlaces %}
+        <a href="{{ url }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold">{{ texto }}</a>
+        {% endfor %}
+        {% if url_nuevo %}
+        <a href="{{ url_nuevo }}" class="{{ clase_boton }} text-white px-4 py-2 rounded-lg text-sm font-bold shadow">{{ pagina.etiqueta_crear }}</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if resumen %}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    {% for etiqueta, dato in resumen %}
+    <div class="bg-white rounded-xl shadow border border-gray-200 px-5 py-4">
+        <p class="text-xs uppercase tracking-wider text-gray-500">{{ etiqueta }}</p>
+        <p class="text-xl font-bold text-gray-800">{{ dato }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="bg-white rounded-xl shadow overflow-x-auto border border-gray-200">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 text-gray-700 text-xs uppercase tracking-wider border-b border-gray-200">
+            <tr>
+                {% for e in encabezados %}<th class="px-4 py-3">{{ e }}</th>{% endfor %}
+                <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 text-gray-700">
+            {% for fila in filas %}
+            <tr class="hover:bg-gray-50">
+                {% for c in fila.celdas %}<td class="px-4 py-3 max-w-xs">{{ c }}</td>{% endfor %}
+                <td class="px-4 py-3 text-center whitespace-nowrap">
+                    {% for a in fila.acciones %}
+                        {% if a.post %}
+                        <form method="post" action="{{ a.url }}" class="inline">{% csrf_token %}
+                            <button type="submit" class="text-purple-700 hover:underline font-semibold">{{ a.label }}</button>
+                        </form>
+                        {% else %}
+                        <a href="{{ a.url }}" class="text-purple-700 hover:underline font-semibold">{{ a.label }}</a>
+                        {% endif %}
+                        <span class="text-gray-300">|</span>
+                    {% endfor %}
+                    {% if tiene_editar %}
+                    <a href="{% url pagina.nombre|add:'_editar' fila.obj.pk %}" class="text-blue-600 hover:underline font-semibold">{{ pagina.etiqueta_editar }}</a>
+                    {% endif %}
+                    {% if tiene_eliminar %}
+                    <span class="text-gray-300">|</span>
+                    <a href="{% url pagina.nombre|add:'_eliminar' fila.obj.pk %}" class="text-red-600 hover:underline font-semibold">Eliminar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="{{ encabezados|length|add:1 }}" class="px-6 py-10 text-center text-gray-400 italic">No hay registros todavía.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

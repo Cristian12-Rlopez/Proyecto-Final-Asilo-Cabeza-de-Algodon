@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block titulo %}{{ titulo_pagina }}{% endblock %}
+{% block contenido %}
+<h2 class="text-2xl font-bold text-gray-800 mb-1">{{ titulo_pagina }}</h2>
+{% if descripcion %}<p class="text-sm text-gray-500 mb-4">{{ descripcion }}</p>{% endif %}
+
+{% if pestanas|length > 1 %}
+<div class="flex flex-wrap gap-2 mb-4">
+    {% for k, nombre in pestanas %}
+    <a href="?r={{ k }}&desde={{ desde }}&hasta={{ hasta }}&interno={{ interno_sel }}"
+       class="px-4 py-2 rounded-lg text-sm font-semibold border {% if k == clave %}bg-rose-600 text-white border-rose-600{% else %}bg-white text-gray-700 border-gray-300 hover:bg-gray-50{% endif %}">{{ nombre }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="get" class="bg-white rounded-xl shadow border border-gray-200 p-4 mb-6 flex flex-wrap items-end gap-4 text-sm">
+    <input type="hidden" name="r" value="{{ clave }}">
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Desde</label>
+        <input type="date" name="desde" value="{{ desde }}" class="border border-gray-300 rounded-lg px-3 py-2"></div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Hasta</label>
+        <input type="date" name="hasta" value="{{ hasta }}" class="border border-gray-300 rounded-lg px-3 py-2"></div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Paciente</label>
+        <select name="interno" class="border border-gray-300 rounded-lg px-3 py-2">
+            <option value="">Todos</option>
+            {% for i in internos %}<option value="{{ i.pk }}" {% if interno_sel == i.pk|stringformat:"s" %}selected{% endif %}>{{ i.nombre_completo }}</option>{% endfor %}
+        </select></div>
+    <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-5 py-2 rounded-lg">Generar reporte</button>
+    <div class="ml-auto flex gap-2">
+        <a href="?{{ qs_base }}&formato=pdf" class="bg-gray-800 hover:bg-gray-900 text-white font-bold px-4 py-2 rounded-lg">Descargar PDF</a>
+        <a href="?{{ qs_base }}&formato=xlsx" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg">Descargar Excel</a>
+    </div>
+</form>
+
+<div class="bg-white rounded-xl shadow border border-gray-200 p-5 mb-4">
+    <h3 class="text-lg font-bold text-gray-800">{{ reporte.titulo }}</h3>
+    {% for linea in reporte.subtitulo %}<p class="text-sm text-gray-500">{{ linea }}</p>{% endfor %}
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-x-auto border border-gray-200 mb-4">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 text-gray-700 text-xs uppercase border-b"><tr>
+            {% for c in reporte.columnas %}<th class="px-4 py-3">{{ c }}</th>{% endfor %}</tr></thead>
+        <tbody class="divide-y text-gray-700">
+        {% for fila in reporte.filas %}
+            <tr class="hover:bg-gray-50">{% for celda in fila %}<td class="px-4 py-3 align-top">{{ celda }}</td>{% endfor %}</tr>
+        {% empty %}
+            <tr><td colspan="{{ reporte.columnas|length }}" class="px-6 py-8 text-center text-gray-400 italic">Sin registros en el período seleccionado.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if reporte.totales %}
+<div class="bg-white rounded-xl shadow border border-gray-200 p-5 text-sm">
+    {% for etiqueta, dato in reporte.totales %}<p class="py-0.5"><span class="font-bold text-gray-700">{{ etiqueta }}:</span> {{ dato }}</p>{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,3 @@
+Guarda aquí el certificado CA de tu servicio de Aiven con el nombre exacto:  aiven-ca.pem
+(Aiven Console -> tu servicio MySQL -> Overview -> "CA certificate" -> Download).
+Es un certificado público (no es secreto), por lo que puede subirse a GitHub.

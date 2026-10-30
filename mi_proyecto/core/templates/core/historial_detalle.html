@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block titulo %}Historial clínico - {{ interno.nombre_completo }}{% endblock %}
+{% block contenido %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Historial clínico de {{ interno.nombre_completo }}</h2>
+    <a href="{{ url_volver }}" class="text-sm text-gray-500 hover:text-gray-800">&larr; Volver</a>
+</div>
+
+<div class="bg-white rounded-xl shadow border border-gray-200 p-6 mb-6 grid md:grid-cols-3 gap-6 text-sm">
+    <div><p class="text-xs uppercase text-gray-500 mb-1">Motivo de reclusión</p><p class="text-gray-800">{{ interno.motivo_reclusion }}</p></div>
+    <div><p class="text-xs uppercase text-gray-500 mb-1">Psicopatologías</p><p class="text-gray-800">{{ interno.psicopatologias|default:"—" }}</p></div>
+    <div><p class="text-xs uppercase text-gray-500 mb-1">Medicinas de cajón</p><p class="text-gray-800">{{ interno.medicinas_de_cajon|default:"—" }}</p></div>
+</div>
+
+{% for v in visitas %}
+<div class="bg-white rounded-xl shadow border border-gray-200 p-6 mb-4 text-sm">
+    <div class="flex justify-between items-start mb-3">
+        <div>
+            <p class="font-bold text-gray-800">{{ v.fecha_visita|date:"d/m/Y" }} &mdash; {{ v.motivo_visita }}</p>
+            <p class="text-gray-500">Médico tratante: {% if v.medico_especialista %}{{ v.medico_especialista.nombre }} ({{ v.medico_especialista.especialidad }}){% else %}—{% endif %}</p>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded-full font-semibold {% if v.estado == 'Cerrada' %}bg-gray-200 text-gray-700{% else %}bg-emerald-100 text-emerald-800{% endif %}">{{ v.estado }}</span>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+        <div><p class="text-xs uppercase text-gray-500">Diagnóstico</p><p>{{ v.diagnostico|default:"—" }}</p></div>
+        <div><p class="text-xs uppercase text-gray-500">Observaciones médicas</p><p>{{ v.observaciones|default:"—" }}</p></div>
+        <div>
+            <p class="text-xs uppercase text-gray-500">Exámenes y resultados</p>
+            {% for o in v.ordenes.all %}<p>&bull; {{ o.tipo_examen }}: {{ o.resultado|default:"pendiente" }}</p>{% empty %}<p>—</p>{% endfor %}
+        </div>
+        <div>
+            <p class="text-xs uppercase text-gray-500">Medicamentos (cantidad y tiempo de aplicación)</p>
+            {% for r in v.recetas.all %}<p>&bull; {{ r.medicamento }} &times;{{ r.cantidad }} &mdash; {{ r.tiempo_aplicacion }}</p>{% empty %}<p>—</p>{% endfor %}
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="bg-white rounded-xl shadow border border-gray-200 p-10 text-center text-gray-400 italic">Este interno aún no tiene visitas médicas registradas.</div>
+{% endfor %}
+{% endblock %}

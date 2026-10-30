@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Asilo Cabeza de Algodón</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 flex items-center justify-center h-screen">
+
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+        <!-- Encabezado -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Asilo Cabeza de Algodón</h1>
+            <p class="text-sm text-gray-500 mt-1">Sistema Integral de Gestión</p>
+        </div>
+
+        <!-- Mensaje de error si las credenciales fallan -->
+        {% if form.errors %}
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded text-sm" role="alert">
+                <p class="font-bold">Error de acceso</p>
+                <p>Usuario o contraseña incorrectos. Por favor, verifica tus datos.</p>
+            </div>
+        {% endif %}
+
+        <!-- Formulario de Login -->
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_username">Nombre de Usuario:</label>
+                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-800"
+                    placeholder="Ingresa tu usuario">
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_password">Contraseña:</label>
+                <input type="password" name="password" autocomplete="current-password" required id="id_password"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-800"
+                    placeholder="••••••••">
+            </div>
+            
+            <button type="submit" 
+                class="w-full bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-lg hover:bg-emerald-700 transition duration-200 shadow-md">
+                Ingresar al Sistema
+            </button>
+        </form>
+
+        <!-- Pie de página del cuadro -->
+        <div class="mt-6 text-center text-xs text-gray-400">
+            &copy; 2026 Asilo Cabeza de Algodón. Todos los derechos reservados.
+        </div>
+    </div>
+
+</body>
+</html>

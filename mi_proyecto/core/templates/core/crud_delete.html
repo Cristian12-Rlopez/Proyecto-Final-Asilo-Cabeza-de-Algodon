@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+{% block titulo %}Eliminar registro{% endblock %}
+{% block contenido %}
+<div class="max-w-xl mx-auto bg-white rounded-xl shadow border border-gray-200 p-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-2">¿Eliminar este registro?</h2>
+    <p class="text-gray-600 mb-2">{{ object }}</p>
+    {% if pagina.texto_eliminar %}<p class="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">{{ pagina.texto_eliminar }}</p>{% endif %}
+    <p class="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
+    <form method="post" class="flex justify-end gap-3">
+        {% csrf_token %}
+        <a href="{{ url_volver }}" class="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 text-sm font-semibold">Cancelar</a>
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg text-sm font-bold">Sí, eliminar</button>
+    </form>
+</div>
+{% endblock %}

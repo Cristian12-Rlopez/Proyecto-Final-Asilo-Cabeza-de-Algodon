@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Asilo Cabeza de Algodón{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="{{ clase_barra }} text-white shadow-md px-6 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <a href="{% url 'dashboard' %}" class="bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg text-sm font-semibold">&larr; Volver al Menú</a>
+            <span class="text-lg font-bold">{{ modulo_titulo }}</span>
+        </div>
+        <span class="text-sm">Usuario: <strong>{{ request.user.username }}</strong></span>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-8 px-6">
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for m in messages %}
+            <div class="rounded-lg px-4 py-3 text-sm font-medium border
+                {% if m.tags == 'error' %}bg-red-50 text-red-800 border-red-200
+                {% elif m.tags == 'warning' %}bg-amber-50 text-amber-800 border-amber-200
+                {% elif m.tags == 'info' %}bg-blue-50 text-blue-800 border-blue-200
+                {% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %}">{{ m }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block contenido %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% block titulo %}Notificación por correo{% endblock %}
+{% block contenido %}
+<h2 class="text-2xl font-bold text-gray-800 mb-1">Notificación por Correo (RF-06)</h2>
+<p class="text-sm text-gray-500 mb-6">El sistema avisa al familiar al emitir la remisión y al confirmarse la cita. Desde aquí puedes reenviar el aviso.</p>
+
+<div class="bg-white rounded-xl shadow overflow-x-auto border border-gray-200 mb-8">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 text-gray-700 text-xs uppercase border-b"><tr>
+            <th class="px-4 py-3">Solicitud</th><th class="px-4 py-3">Interno</th><th class="px-4 py-3">Especialidad</th><th class="px-4 py-3">Estado</th><th class="px-4 py-3">Correos de familiares</th><th class="px-4 py-3 text-center">Acción</th></tr></thead>
+        <tbody class="divide-y text-gray-700">
+        {% for s in solicitudes %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">#{{ s.id }}</td>
+                <td class="px-4 py-3">{{ s.interno }}</td>
+                <td class="px-4 py-3">{{ s.especialidad_requerida }}</td>
+                <td class="px-4 py-3">{{ s.get_estado_display }}</td>
+                <td class="px-4 py-3">{% for fam in s.interno.familiares.all %}{{ fam.correo_electronico }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-red-600">Sin familiares registrados</span>{% endfor %}</td>
+                <td class="px-4 py-3 text-center">
+                    <form method="post" action="{% url 'notificacion_enviar' s.pk %}">{% csrf_token %}
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Enviar / reenviar correo</button>
+                    </form>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6" class="px-6 py-8 text-center text-gray-400 italic">No hay remisiones emitidas.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-lg font-bold text-gray-800 mb-3">Bitácora de correos</h3>
+<div class="bg-white rounded-xl shadow overflow-x-auto border border-gray-200">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 text-gray-700 text-xs uppercase border-b"><tr>
+            <th class="px-4 py-3">Fecha</th><th class="px-4 py-3">Destinatario</th><th class="px-4 py-3">Asunto</th><th class="px-4 py-3">Resultado</th></tr></thead>
+        <tbody class="divide-y text-gray-700">
+        {% for n in bitacora %}
+            <tr><td class="px-4 py-3">{{ n.fecha|date:"d/m/Y H:i" }}</td><td class="px-4 py-3">{{ n.destinatario }}</td><td class="px-4 py-3">{{ n.asunto }}</td>
+                <td class="px-4 py-3">{% if n.enviado %}<span class="text-emerald-700 font-semibold">Enviado</span>{% else %}<span class="text-red-600 font-semibold">Falló</span>{% endif %}</td></tr>
+        {% empty %}
+            <tr><td colspan="4" class="px-6 py-8 text-center text-gray-400 italic">Aún no se ha enviado ningún correo.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

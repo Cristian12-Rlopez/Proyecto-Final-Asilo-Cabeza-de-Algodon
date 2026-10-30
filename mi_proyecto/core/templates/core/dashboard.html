@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel General - Asilo Cabeza de Algodón</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen relative overflow-x-hidden">
+
+    <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+    <nav class="bg-emerald-700 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+            
+            <!-- Botón Hamburguesa Estilo YouTube -->
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleSidebar()" class="p-2 hover:bg-emerald-800 rounded-lg transition focus:outline-none" title="Abrir menú">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <span class="text-xl font-bold tracking-wide">Asilo Cabeza de Algodón</span>
+            </div>
+
+            <!-- Datos de Usuario y Acciones -->
+            <div class="flex items-center space-x-4">
+                <span class="text-sm">Bienvenido(a), <strong class="underline">{{ usuario.username }}</strong></span>
+                
+                {% if usuario.is_superuser %}
+                    <a href="/admin/" class="bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded text-xs font-bold transition shadow">
+                        Panel Admin
+                    </a>
+                {% endif %}
+                
+                <form method="post" action="{% url 'logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs font-bold transition shadow">
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CAPA CORTINA (OVERLAY) -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity"></div>
+
+    <!-- MENÚ LATERAL DESPLEGABLE CON LOS 5 MÓDULOS -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="p-4 bg-emerald-700 text-white flex justify-between items-center sticky top-0 z-10">
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleSidebar()" class="p-1 hover:bg-emerald-800 rounded-lg transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <span class="font-bold text-lg">Módulos del Sistema</span>
+            </div>
+        </div>
+
+        <div class="py-4 divide-y divide-gray-100">
+            <!-- Inicio -->
+            <div class="px-3 py-2">
+                <a href="/dashboard/" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Inicio / Resumen General</span>
+                </a>
+            </div>
+
+            <!-- MÓDULO 1 -->
+            <div class="px-3 py-3">
+                <p class="px-3 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">1. Gestión de Internos</p>
+                <ul class="space-y-1 text-xs text-gray-700">
+                    <li><a href="{% url 'expedientes_generales' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Expedientes Generales</span></a></li>
+                    <li><a href="{% url 'motivos_reclusion' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Motivos de Reclusión</span></a></li>
+                    <li><a href="{% url 'ficha_medica' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Ficha Médica y Medicinas Cajón</span></a></li>
+                    <li><a href="{% url 'registro_psicopatologias' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Registro Psicopatologías</span></a></li>
+                    <li><a href="{% url 'historial_clinico' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Historial Clínico Digital</span></a></li>
+                    <li><a href="{% url 'familiares' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Familiares Responsables</span></a></li>
+                </ul>
+            </div>
+
+            <!-- MÓDULO 2 -->
+            <div class="px-3 py-3">
+                <p class="px-3 text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">2. Solicitudes y Agenda</p>
+                <ul class="space-y-1 text-xs text-gray-700">
+                    <li><a href="{% url 'evaluaciones_iniciales' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Evaluaciones Iniciales</span></a></li>
+                    <li><a href="{% url 'remisiones_web' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Solicitudes Remisión Web</span></a></li>
+                    <li><a href="{% url 'asignacion_enfermeros' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Asignación Enfermeros</span></a></li>
+                    <li><a href="{% url 'medicos' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Catálogo de Médicos Fundación</span></a></li>
+                    <li><a href="{% url 'enfermeros' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Catálogo de Enfermeros</span></a></li>
+                    <li><a href="{% url 'agenda_citas' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Agenda Citas Fundación</span></a></li>
+                    <li><a href="{% url 'notificacion_smtp' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Notificación Correo SMTP</span></a></li>
+                </ul>
+            </div>
+
+            <!-- MÓDULO 3 -->
+            <div class="px-3 py-3">
+                <p class="px-3 text-xs font-bold text-purple-700 uppercase tracking-wider mb-2">3. Visita Médica y Servicios</p>
+                <ul class="space-y-1 text-xs text-gray-700">
+                    <li><a href="{% url 'consultas_especializadas' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Consultas Especializadas</span></a></li>
+                    <li><a href="{% url 'diagnostico_observaciones' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Diagnóstico y Observaciones</span></a></li>
+                    <li><a href="{% url 'ordenes_laboratorio' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Órdenes de Laboratorio</span></a></li>
+                    <li><a href="{% url 'carga_resultados' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Carga Resultados Digitales</span></a></li>
+                    <li><a href="{% url 'recetas_farmacia' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Recetas y Despacho Farmacia</span></a></li>
+                </ul>
+            </div>
+
+            <!-- MÓDULO 4 -->
+            <div class="px-3 py-3">
+                <p class="px-3 text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">4. Gestión Financiera</p>
+                <ul class="space-y-1 text-xs text-gray-700">
+                    <li><a href="{% url 'descuentos_fundacion' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Descuentos Fundación</span></a></li>
+                    <li><a href="{% url 'cuentas_pagar' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Cuentas por Pagar Fundación</span></a></li>
+                    <li><a href="{% url 'pagos_fundacion' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Pagos a la Fundación</span></a></li>
+                    <li><a href="{% url 'cargos_cuotas' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Cargos Cuotas Familiares</span></a></li>
+                    <li><a href="{% url 'registro_donaciones' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Registro Donaciones</span></a></li>
+                    <li><a href="{% url 'gastos_operativos' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Gastos Operativos Asilo</span></a></li>
+                </ul>
+            </div>
+
+            <!-- MÓDULO 5 -->
+            <div class="px-3 py-3">
+                <p class="px-3 text-xs font-bold text-rose-700 uppercase tracking-wider mb-2">5. Sistema de Reportes</p>
+                <ul class="space-y-1 text-xs text-gray-700">
+                    <li><a href="{% url 'reportes_clinicos' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-rose-50 hover:text-rose-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Reportes Clínicos Paciente</span></a></li>
+                    <li><a href="{% url 'balance_ingresos' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-rose-50 hover:text-rose-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Balance Ingresos y Donaciones</span></a></li>
+                    <li><a href="{% url 'estado_egreso' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-rose-50 hover:text-rose-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Estado Egreso Operativo</span></a></li>
+                    <li><a href="{% url 'control_costos' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-rose-50 hover:text-rose-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Control Costos por Cita</span></a></li>
+                    <li><a href="{% url 'exportacion_pdf_excel' %}" class="flex items-center space-x-2 px-3 py-1.5 hover:bg-rose-50 hover:text-rose-700 rounded-lg transition"><span class="text-gray-400">•</span><span>Exportación PDF y Excel</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL: INFORMACIÓN GENERAL DEL ASILO -->
+    <div class="max-w-7xl mx-auto py-10 px-6">
+        
+        <!-- Tarjeta de Bienvenida Institucional -->
+        <div class="bg-gradient-to-r from-emerald-800 to-emerald-600 rounded-2xl shadow-lg text-white p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-2">Asilo "Cabeza de Algodón"</h2>
+            <p class="text-emerald-100 text-sm max-w-3xl leading-relaxed">
+                Sistema integral para la coordinación de la atención médica de los internos, logística de remisiones a fundaciones especialistas y control financiero institucional. Utiliza el menú lateral izquierdo para desplegar los 5 módulos funcionales.
+            </p>
+        </div>
+
+        <!-- Tarjetas Resumen de los 5 Módulos -->
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Resumen de Módulos del Sistema</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Bloque 1 -->
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-emerald-600">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-gray-700 text-sm">1. Gestión de Internos</h4>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-semibold">Módulo 1</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-4">CRUD de expedientes, causas de reclusión, psicopatologías y medicinas de cajón.</p>
+            </div>
+
+            <!-- Bloque 2 -->
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-blue-600">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-gray-700 text-sm">2. Solicitudes y Agenda</h4>
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold">Módulo 2</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-4">Remisiones web a la fundación, asignación de enfermeros y avisos SMTP.</p>
+            </div>
+
+            <!-- Bloque 3 -->
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-purple-600">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-gray-700 text-sm">3. Visita Médica y Servicios</h4>
+                    <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-semibold">Módulo 3</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-4">Atención de especialistas, diagnósticos, laboratorio digital y farmacia.</p>
+            </div>
+
+            <!-- Bloque 4 -->
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-amber-600">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-gray-700 text-sm">4. Gestión Financiera</h4>
+                    <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-semibold">Módulo 4</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-4">Descuentos, cuotas mensuales a familiares, donaciones y egresos.</p>
+            </div>
+
+            <!-- Bloque 5 -->
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-rose-600">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-gray-700 text-sm">5. Sistema de Reportes</h4>
+                    <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-semibold">Módulo 5</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-4">Compilación de balances financieros e historiales exportables a PDF/Excel.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE CONTROL DEL MENÚ LATERAL -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
